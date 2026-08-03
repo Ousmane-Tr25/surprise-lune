@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050816" />
+  <title>Une petite surprise pour Maimouna</title>
+  <style>
+    :root {
+      --night-1: #030713;
+      --night-2: #071631;
+      --night-3: #142552;
+      --gold: #ffe38a;
+      --soft-white: #f8fbff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--soft-white);
+      background: var(--night-1);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      min-height: 540px;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 115%, rgba(82, 113, 201, 0.34), transparent 42%),
+        linear-gradient(180deg, var(--night-1) 0%, var(--night-2) 58%, var(--night-3) 100%);
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -4;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      background:
+        radial-gradient(circle at 50% 85%, rgba(109, 136, 222, 0.22), transparent 34%),
+        linear-gradient(180deg, #02040c 0%, #071331 62%, #172858 100%);
+    }
+
+    .page.revealed::before {
+      opacity: 1;
+    }
+
+    .stars,
+    .shooting-stars,
+    .ambient {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .stars {
+      z-index: -2;
+      opacity: 0;
+      transition: opacity 1.6s ease 0.15s;
+    }
+
+    .revealed .stars {
+      opacity: 1;
+    }
+
+    .star-dot {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, var(--alpha));
+      box-shadow: 0 0 calc(var(--size) * 3) rgba(205, 225, 255, 0.9);
+      animation: twinkle var(--duration) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes twinkle {
+      0%, 100% { transform: scale(0.65); opacity: 0.35; }
+      50% { transform: scale(1.35); opacity: 1; }
+    }
+
+    .shooting-stars {
+      z-index: -1;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 1.2s ease 1.2s;
+    }
+
+    .revealed .shooting-stars {
+      opacity: 1;
+    }
+
+    .shooting-star {
+      position: absolute;
+      top: 18%;
+      left: 80%;
+      width: 130px;
+      height: 2px;
+      opacity: 0;
+      transform: rotate(-34deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.95));
+      filter: drop-shadow(0 0 5px rgba(210,230,255,.9));
+      animation: shoot 6.5s ease-in-out infinite;
+      animation-delay: 2.4s;
+    }
+
+    .shooting-star.second {
+      top: 35%;
+      left: 68%;
+      width: 90px;
+      animation-delay: 5.2s;
+      animation-duration: 8s;
+    }
+
+    @keyframes shoot {
+      0%, 72% { opacity: 0; transform: translate(0, 0) rotate(-34deg); }
+      75% { opacity: 1; }
+      86% { opacity: 0; transform: translate(-420px, 280px) rotate(-34deg); }
+      100% { opacity: 0; }
+    }
+
+    .ambient {
+      z-index: -3;
+      opacity: 0;
+      transition: opacity 1.8s ease 0.4s;
+      background:
+        radial-gradient(circle at 15% 85%, rgba(116, 137, 224, 0.13), transparent 28%),
+        radial-gradient(circle at 85% 78%, rgba(212, 154, 255, 0.09), transparent 26%);
+    }
+
+    .revealed .ambient {
+      opacity: 1;
+    }
+
+    .intro {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      z-index: 5;
+      transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
+    }
+
+    .intro.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.05);
+    }
+
+    .card {
+      width: min(92vw, 520px);
+      padding: 34px 26px 28px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 30px;
+      text-align: center;
+      background: rgba(8, 14, 31, 0.72);
+      box-shadow:
+        0 25px 70px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.12);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.85rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(228, 237, 255, 0.72);
+    }
+
+    .intro h1 {
+      margin: 0;
+      font-size: clamp(2rem, 7vw, 3.35rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .intro-message {
+      min-height: 52px;
+      margin: 18px auto 24px;
+      max-width: 390px;
+      font-size: clamp(1rem, 3.8vw, 1.15rem);
+      line-height: 1.55;
+      color: rgba(242,247,255,.82);
+    }
+
+    .start-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: min(100%, 270px);
+      min-height: 58px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 999px;
+      color: #10172c;
+      font-weight: 750;
+      cursor: pointer;
+      background: linear-gradient(135deg, #fff6c9, #ffd875);
+      box-shadow: 0 12px 34px rgba(255, 215, 112, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 42px rgba(255, 215, 112, 0.34);
+    }
+
+    .start-button:active {
+      transform: scale(0.98);
+    }
+
+    .start-button:disabled {
+      cursor: default;
+      opacity: 0.78;
+    }
+
+    .countdown {
+      display: none;
+      margin: 5px 0 0;
+      font-size: clamp(4.5rem, 22vw, 7.5rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--gold);
+      text-shadow: 0 0 35px rgba(255, 226, 137, 0.34);
+      animation: countPulse 0.85s ease-in-out;
+    }
+
+    .countdown.visible {
+      display: block;
+    }
+
+    @keyframes countPulse {
+      0% { opacity: 0; transform: scale(0.55); }
+      55% { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .surprise {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 26px 20px 34px;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.92);
+      transition:
+        opacity 1.25s ease 0.25s,
+        visibility 1.25s ease 0.25s,
+        transform 1.4s cubic-bezier(.2,.8,.2,1) 0.2s;
+    }
+
+    .revealed .surprise {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .celestial {
+      position: relative;
+      width: min(72vw, 320px);
+      aspect-ratio: 1 / 1;
+      margin-bottom: 2px;
+      filter: drop-shadow(0 0 34px rgba(255, 226, 140, 0.2));
+      animation: float 5.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+
+    .moon-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .moon-main {
+      transform-origin: 50% 50%;
+      animation: moonBreathe 4s ease-in-out infinite;
+    }
+
+    @keyframes moonBreathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.025); }
+    }
+
+    .sparkle {
+      transform-origin: center;
+      animation: sparkle 2.3s ease-in-out infinite;
+    }
+
+    .sparkle.s2 { animation-delay: .65s; }
+    .sparkle.s3 { animation-delay: 1.15s; }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: .35; transform: scale(.7) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1.25) rotate(15deg); }
+    }
+
+    .surprise h2 {
+      margin: 0;
+      font-size: clamp(1.9rem, 8vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      text-wrap: balance;
+    }
+
+    .surprise p {
+      width: min(92vw, 620px);
+      margin: 10px auto 0;
+      font-size: clamp(1rem, 4.2vw, 1.22rem);
+      line-height: 1.6;
+      color: rgba(241, 246, 255, 0.84);
+      text-wrap: balance;
+    }
+
+    .signature {
+      margin-top: 12px !important;
+      color: var(--gold) !important;
+      font-weight: 650;
+    }
+
+    .tiny-hint {
+      position: absolute;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      font-size: .78rem;
+      color: rgba(233, 240, 255, 0.42);
+      opacity: 0;
+      transition: opacity 1.2s ease 2.2s;
+    }
+
+    .revealed .tiny-hint {
+      opacity: 1;
+    }
+
+    @media (max-height: 640px) {
+      .celestial {
+        width: min(43vh, 250px);
+      }
+
+      .surprise {
+        gap: 2px;
+      }
+
+      .surprise p {
+        margin-top: 4px;
+        line-height: 1.45;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="ambient"></div>
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
+    <div class="shooting-stars" aria-hidden="true">
+      <span class="shooting-star"></span>
+      <span class="shooting-star second"></span>
+    </div>
+
+    <section class="intro" id="intro" aria-live="polite">
+      <div class="card">
+        <p class="eyebrow">Une petite surprise</p>
+        <h1>Maimouna 🌙</h1>
+        <p class="intro-message" id="introMessage">
+          Clique sur le bouton… puis ferme les yeux pendant trois secondes.
+        </p>
+        <button class="start-button" id="startButton" type="button">
+          <span>Découvrir la surprise</span>
+          <span aria-hidden="true">✨</span>
+        </button>
+        <div class="countdown" id="countdown" aria-label="Compte à rebours">3</div>
+      </div>
+    </section>
+
+    <section class="surprise" id="surprise" aria-hidden="true">
+      <div class="celestial" aria-hidden="true">
+        <svg class="moon-svg" viewBox="0 0 320 320" role="img" aria-label="Une lune en croissant et des étoiles">
+          <defs>
+            <radialGradient id="moonGradient" cx="38%" cy="32%" r="72%">
+              <stop offset="0%" stop-color="#fffbdc" />
+              <stop offset="58%" stop-color="#ffe49a" />
+              <stop offset="100%" stop-color="#f4bd55" />
+            </radialGradient>
+
+            <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="9" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <mask id="crescentMask">
+              <rect width="320" height="320" fill="black" />
+              <circle cx="145" cy="165" r="103" fill="white" />
+              <circle cx="195" cy="127" r="104" fill="black" />
+            </mask>
+          </defs>
+
+          <g class="moon-main" filter="url(#glow)">
+            <circle cx="145" cy="165" r="103" fill="url(#moonGradient)" mask="url(#crescentMask)" />
+          </g>
+
+          <g fill="#fff1a9" filter="url(#glow)">
+            <path class="sparkle" d="M256 79 L263 96 L280 103 L263 110 L256 127 L249 110 L232 103 L249 96 Z"/>
+            <path class="sparkle s2" d="M238 177 L243 189 L255 194 L243 199 L238 211 L233 199 L221 194 L233 189 Z"/>
+            <path class="sparkle s3" d="M286 145 L290 154 L299 158 L290 162 L286 171 L282 162 L273 158 L282 154 Z"/>
+          </g>
+
+          <circle cx="270" cy="218" r="4.2" fill="#ffffff" opacity=".85" />
+          <circle cx="217" cy="58" r="3.2" fill="#ffffff" opacity=".75" />
+          <circle cx="286" cy="92" r="2.4" fill="#ffffff" opacity=".68" />
+        </svg>
+      </div>
+
+      <h2>Tu avais demandé la lune…</h2>
+      <p>
+        Je ne pouvais peut-être pas te la décrocher pour de vrai,
+        alors je t’en ai créé une, avec quelques étoiles rien que pour toi ✨
+      </p>
+      <p class="signature">— Ousmane</p>
+      <div class="tiny-hint">La surprise recommence si tu actualises la page.</div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const page = document.getElementById("page");
+      const intro = document.getElementById("intro");
+      const introMessage = document.getElementById("introMessage");
+      const startButton = document.getElementById("startButton");
+      const countdown = document.getElementById("countdown");
+      const surprise = document.getElementById("surprise");
+      const starsContainer = document.getElementById("stars");
+
+      function createStars(count = 115) {
+        const fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < count; i += 1) {
+          const star = document.createElement("span");
+          star.className = "star-dot";
+
+          const size = (Math.random() * 2.4 + 0.8).toFixed(2);
+          const alpha = (Math.random() * 0.6 + 0.35).toFixed(2);
+          const duration = (Math.random() * 3.8 + 2.2).toFixed(2);
+          const delay = (Math.random() * -6).toFixed(2);
+
+          star.style.left = `${(Math.random() * 100).toFixed(2)}%`;
+          star.style.top = `${(Math.random() * 82).toFixed(2)}%`;
+          star.style.setProperty("--size", `${size}px`);
+          star.style.setProperty("--alpha", alpha);
+          star.style.setProperty("--duration", `${duration}s`);
+          star.style.setProperty("--delay", `${delay}s`);
+
+          fragment.appendChild(star);
+        }
+
+        starsContainer.appendChild(fragment);
+      }
+
+      function showCount(value) {
+        countdown.textContent = String(value);
+        countdown.classList.remove("visible");
+        void countdown.offsetWidth;
+        countdown.classList.add("visible");
+      }
+
+      function revealSurprise() {
+        intro.classList.add("hidden");
+        page.classList.add("revealed");
+        surprise.setAttribute("aria-hidden", "false");
+      }
+
+      startButton.addEventListener("click", () => {
+        startButton.disabled = true;
+        startButton.style.display = "none";
+        introMessage.textContent = "Ferme les yeux maintenant… et compte doucement jusqu’à trois.";
+
+        showCount(3);
+
+        window.setTimeout(() => showCount(2), 1000);
+        window.setTimeout(() => showCount(1), 2000);
+        window.setTimeout(revealSurprise, 3000);
+      }, { once: true });
+
+      createStars();
+    })();
+  </script>
+</body>
+</html>
